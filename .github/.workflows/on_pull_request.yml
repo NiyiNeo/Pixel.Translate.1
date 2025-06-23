@@ -1,4 +1,4 @@
-name: Process Audio on Pull Request 
+name: Process Audio on Pull Request
 
 on:
   pull_request:
@@ -19,18 +19,18 @@ jobs:
       TRANSLATE_LANG: ${{ secrets.TRANSLATE_LANG }}
       POLLY_VOICE: ${{ secrets.POLLY_VOICE }}
 
-steps:
-  - name: Checkout code
-    uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  - name: Set up AWS CLI
-    uses: aws-actions/configure-aws-credentials@v3
-    with:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ${{ secrets.AWS_REGION }}  
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-  - name: Run processing audio script
-    run: |
-      pip install boto3 --upgrade
-      python process_audio.py  
+      - name: Run processing audio script
+        run: |
+          pip install boto3 --upgrade
+          python process_audio.py
