@@ -1,12 +1,13 @@
-name: PR Trigger Test
+ name: Test PR Trigger
 
 on:
   pull_request:
     branches: [main]
 
 jobs:
-  test-run:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: ✅ PR workflow test
-        run: echo "Hello from PR workflow!" 
+      - name: ✅ Test step
+        run: echo "🎯 PR workflow triggered"
+
