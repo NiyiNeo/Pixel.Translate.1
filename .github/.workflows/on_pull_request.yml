@@ -1,4 +1,6 @@
 name: Process Audio on Pull Request to main
+- name: ✅ Debug – Confirm PR workflow is running
+  run: echo "🎯 GitHub Actions is working"
 
 on:
   pull_request:
