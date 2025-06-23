@@ -1,4 +1,4 @@
-name: Process Audio on Pull Request
+name: Process Audio on Pull Request to main
 
 on:
   pull_request:
