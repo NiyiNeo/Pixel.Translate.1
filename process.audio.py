@@ -4,7 +4,7 @@ import json
 import time
 from datetime import datetime
 
-# Initialize session using GitHub Actions secrets
+# Start session using GitHub Actions secrets
 session = boto3.Session(
     aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
     aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
