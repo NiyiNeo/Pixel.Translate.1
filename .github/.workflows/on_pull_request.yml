@@ -33,4 +33,4 @@ steps:
   - name: Run processing audio script
     run: |
       pip install boto3 --upgrade
-      python process_audio.py  
+      python process.audio.py  
