@@ -1,11 +1,11 @@
-name: Process Audio on Pull Request to main
+name: Process Audio (beta)
 
 on:
   pull_request:
-    branches: [main]
+
 
 jobs:
-  process-audio:
+  process_audio:
     runs-on: ubuntu-latest
 
     env:
@@ -30,7 +30,7 @@ steps:
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       aws-region: ${{ secrets.AWS_REGION }}  
 
-  - name: Run processing audio script
+  - name: process_audio (beta)
     run: |
       pip install boto3 --upgrade
       python process_audio.py  
