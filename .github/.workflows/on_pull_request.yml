@@ -2,7 +2,7 @@ name: Deploy Process Audio
 
 on:
   pull_request:
-    branch: [main]
+    branches: [main]
 
 jobs:
   process_audio:
