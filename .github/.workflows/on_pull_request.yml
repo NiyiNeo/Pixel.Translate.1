@@ -1,37 +1,36 @@
-name: Process Audio on Pull Reqest 
+name: Deploy Process Audio
 
 on:
   pull_request:
-    branches: [main]
-
+    branch: [main]
 
 jobs:
   process_audio:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
       S3_BUCKET_PROD: ${{ secrets.S3_BUCKET_PROD }}
       S3_BUCKET_BETA: ${{ secrets.S3_BUCKET_BETA }}
       FILENAME: ${{ secrets.FILENAME }}
       SOURCE_LANG: ${{ secrets.SOURCE_LANG }}
       TRANSLATE_LANG: ${{ secrets.TRANSLATE_LANG }}
       POLLY_VOICE: ${{ secrets.POLLY_VOICE }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
 
-steps:
-  - name: Checkout code
-    uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  - name: Set up AWS CLI
-    uses: aws-actions/configure-aws-credentials@v3
-    with:
-      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ${{ secrets.AWS_REGION }}  
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-  - name: process_audio (beta)
-    run: |
-      pip install boto3 --upgrade
-      python process_audio.py  
+      - name: Run audio processing script
+        run: |
+          pip install boto3 --upgrade
+          python process_audio.py
