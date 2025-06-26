@@ -4,14 +4,14 @@ import json
 import time
 from datetime import datetime 
 
-# Start sessions using GitHub Actions secrets
+# Sessions using GitHub Actions secrets
 session = boto3.Session(
     aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
     aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
     region_name=os.environ['AWS_REGION']
 )
 
-# Clients
+# AWS Clients
 s3 = session.client('s3')
 transcribe = session.client('transcribe')
 translate = session.client('translate')
@@ -42,7 +42,7 @@ final_audio_file = f"{prod_prefix}/audio_outputs/{filename}_{translate_lang}.mp3
 
 # Step 1: Upload original MP3 to S3
 print("Uploading MP3 to S3...")
-s3.upload_file(f"{filename}.mp3", prod_bucket, audio_file)
+s3.upload_file(f"audio_inputs/{filename}.mp3", prod_bucket, audio_file)
 print(f"Uploaded to: {audio_uri}")
 
 # Step 2: Start transcription job
@@ -103,7 +103,6 @@ polly_response = polly.synthesize_speech(
     OutputFormat='mp3',
     Text=translated_text,
     VoiceId=polly_voice,
-    LanguageCode=f"{translate_lang}-ES"
 )
 
 with open(f"{filename}_{translate_lang}.mp3", 'wb') as f:
