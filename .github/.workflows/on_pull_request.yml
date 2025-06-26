@@ -1,7 +1,8 @@
-name: Process Audio (beta)
+name: Process Audio on Pull Reqest 
 
 on:
   pull_request:
+    branches: [main]
 
 
 jobs:
