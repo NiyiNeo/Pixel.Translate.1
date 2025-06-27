@@ -57,14 +57,16 @@ while True:
         break
     time.sleep(5)
 
-# Step 4: Get transcript file 
-transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-response = requests.get(transcript_uri)
+# Download from S3 since OutputBucketName was set
+transcript_file_key = f"{job_name}.json"
+local_transcript_file = "/tmp/transcript.json"
 
-if response.status_code != 200 or not response.text.strip():
-    raise Exception(f"Failed to retrieve valid transcript. Status: {response.status_code}, URL: {transcript_uri}")
+# Download transcript from beta bucket
+s3.download_file(beta_bucket, transcript_file_key, local_transcript_file)
 
-transcript_json = response.json()
+with open(local_transcript_file, 'r') as f:
+    transcript_json = json.load(f)
+
 transcript_text = transcript_json['results']['transcripts'][0]['transcript']
 
 # Step 5: Upload plain transcript
