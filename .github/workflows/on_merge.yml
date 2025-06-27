@@ -1,12 +1,13 @@
-name: Process Audio on Pull Request to main
+name: Deploy Process Audio to Prod on Merge
 
 on:
-  pull_request:
+  push:
     branches: [main]
 
 jobs:
   process_audio:
     runs-on: ubuntu-latest
+
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
