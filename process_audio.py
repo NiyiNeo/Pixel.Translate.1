@@ -5,7 +5,7 @@ import time
 import requests 
 from datetime import datetime
 
-# Setup AWS session using GitHub Actions secrets
+# AWS session using GitHub Actions secrets
 session = boto3.Session(
     aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
     aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
