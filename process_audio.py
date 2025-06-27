@@ -57,9 +57,14 @@ while True:
         break
     time.sleep(5)
 
-# Step 4: Get transcript file URI
+# Step 4: Get transcript file 
 transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-transcript_json = json.loads(requests.get(transcript_uri).text)
+response = requests.get(transcript_uri)
+
+if response.status_code != 200 or not response.text.strip():
+    raise Exception(f"Failed to retrieve valid transcript. Status: {response.status_code}, URL: {transcript_uri}")
+
+transcript_json = response.json()
 transcript_text = transcript_json['results']['transcripts'][0]['transcript']
 
 # Step 5: Upload plain transcript
