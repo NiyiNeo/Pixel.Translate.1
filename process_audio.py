@@ -2,6 +2,7 @@ import boto3
 import os
 import json
 import time
+import requests
 from datetime import datetime
 
 # Setup AWS session using GitHub Actions secrets
@@ -58,7 +59,7 @@ while True:
 
 # Step 4: Get transcript file URI
 transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-transcript_json = json.loads(boto3.client('s3')._endpoint.http_session.get(transcript_uri).text)
+transcript_json = json.loads(requests.get(transcript_uri).text)
 transcript_text = transcript_json['results']['transcripts'][0]['transcript']
 
 # Step 5: Upload plain transcript
