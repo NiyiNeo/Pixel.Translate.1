@@ -4,6 +4,9 @@ import json
 import time
 from datetime import datetime 
 
+beta_prefix = "beta"
+prod_prefix = "prod"
+
 # Start sessions using GitHub Actions secrets
 session = boto3.Session(
     aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
@@ -38,7 +41,6 @@ final_audio_key = f"prod/audio_outputs/{filename}_{translate_lang}.mp3"
 
 # Step 1: Upload original MP3 to S3
 s3.upload_file(f"{filename}_{translate_lang}.mp3", prod_bucket, audio_file)
-
 
 # Step 2: Start transcription job
 transcribe.start_transcription_job(
