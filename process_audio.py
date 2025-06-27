@@ -2,7 +2,6 @@ import boto3
 import os
 import json
 import time
-import requests 
 from datetime import datetime
 
 # Setup AWS session using GitHub Actions secrets
@@ -18,7 +17,7 @@ transcribe = session.client('transcribe')
 translate = session.client('translate')
 polly = session.client('polly')
 
-#Setup GitHub secrets
+# Setup GitHub secrets
 prod_bucket = os.environ['S3_BUCKET_PROD']
 beta_bucket = os.environ['S3_BUCKET_BETA']
 filename = os.environ['FILENAME']
@@ -35,10 +34,10 @@ transcript_key = f"beta/transcripts/{filename}.txt"
 translated_key = f"beta/translations/{filename}_{translate_lang}.txt"
 final_audio_key = f"prod/audio_outputs/{filename}_{translate_lang}.mp3"
 
-# Step 1: Upload audio to S3
+# Upload audio to S3
 s3.upload_file(f"{filename}.mp3", prod_bucket, audio_file)
 
-# Step 2: Start transcription job
+# Start transcription job
 transcribe.start_transcription_job(
     TranscriptionJobName=job_name,
     Media={'MediaFileUri': audio_uri},
@@ -47,7 +46,7 @@ transcribe.start_transcription_job(
     OutputBucketName=beta_bucket
 )
 
-# Step 3: Wait for job to finish
+# Wait for job to finish
 while True:
     status = transcribe.get_transcription_job(TranscriptionJobName=job_name)
     job_status = status['TranscriptionJob']['TranscriptionJobStatus']
@@ -57,20 +56,17 @@ while True:
         break
     time.sleep(5)
 
-# Step 4: Get transcript file 
-transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-response = requests.get(transcript_uri)
-
-if response.status_code != 200 or not response.text.strip():
-    raise Exception(f"Failed to retrieve valid transcript. Status: {response.status_code}, URL: {transcript_uri}")
-
-transcript_json = response.json()
+# Get transcript file directly from S3
+transcript_s3_key = f"{job_name}.json"
+transcript_obj = s3.get_object(Bucket=beta_bucket, Key=transcript_s3_key)
+transcript_data = transcript_obj['Body'].read().decode('utf-8')
+transcript_json = json.loads(transcript_data)
 transcript_text = transcript_json['results']['transcripts'][0]['transcript']
 
-# Step 5: Upload plain transcript
+# Upload plain transcript
 s3.put_object(Bucket=beta_bucket, Key=transcript_key, Body=transcript_text.encode())
 
-# Step 6: Translate
+# Translate
 translation = translate.translate_text(
     Text=transcript_text,
     SourceLanguageCode=source_lang.split("-")[0],
@@ -78,10 +74,10 @@ translation = translate.translate_text(
 )
 translated_text = translation['TranslatedText']
 
-# Step 7: Upload translated text
+# Upload translated text
 s3.put_object(Bucket=beta_bucket, Key=translated_key, Body=translated_text.encode())
 
-# Step 8: Use Polly to synthesize speech
+# Use Polly to synthesize speech
 polly_response = polly.synthesize_speech(
     OutputFormat='mp3',
     Text=translated_text,
@@ -92,6 +88,7 @@ polly_response = polly.synthesize_speech(
 with open(f"{filename}_{translate_lang}.mp3", 'wb') as f:
     f.write(polly_response['AudioStream'].read())
 
-# Step 9: Upload final audio
+# Upload final audio
 s3.upload_file(f"{filename}_{translate_lang}.mp3", prod_bucket, final_audio_key)
+
 
