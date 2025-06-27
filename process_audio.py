@@ -26,7 +26,7 @@ source_lang = os.environ['SOURCE_LANG']
 translate_lang = os.environ['TRANSLATE_LANG']
 polly_voice = os.environ['POLLY_VOICE']
 
-# Paths and timestamp
+# Paths with timestamp
 timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 job_name = f"PixelLearn-{timestamp}"
 audio_file = f"prod/audio/{filename}.mp3"
