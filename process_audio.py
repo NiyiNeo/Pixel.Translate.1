@@ -2,7 +2,6 @@ import boto3
 import os
 import json
 import time
-import requests 
 from datetime import datetime
 
 # Setup AWS session using GitHub Actions secrets
@@ -34,6 +33,7 @@ audio_uri = f"s3://{prod_bucket}/{audio_file}"
 transcript_key = f"beta/transcripts/{filename}.txt"
 translated_key = f"beta/translations/{filename}_{translate_lang}.txt"
 final_audio_key = f"prod/audio_outputs/{filename}_{translate_lang}.mp3"
+transcript_json_key = f"{job_name}.json" 
 
 # Step 1: Upload audio to S3
 s3.upload_file(f"{filename}.mp3", prod_bucket, audio_file)
@@ -58,13 +58,8 @@ while True:
     time.sleep(5)
 
 # Step 4: Get transcript file 
-transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-response = requests.get(transcript_uri)
-
-if response.status_code != 200 or not response.text.strip():
-    raise Exception(f"Failed to retrieve valid transcript. Status: {response.status_code}, URL: {transcript_uri}")
-
-transcript_json = response.json()
+transcript_obj = s3.get_object(Bucket=beta_bucket, Key=transcript_json_key)
+transcript_json = json.loads(transcript_obj['Body'].read())
 transcript_text = transcript_json['results']['transcripts'][0]['transcript']
 
 # Step 5: Upload plain transcript
@@ -95,4 +90,4 @@ with open(f"{filename}_{translate_lang}.mp3", 'wb') as f:
 # Step 9: Upload final audio
 s3.upload_file(f"{filename}_{translate_lang}.mp3", prod_bucket, final_audio_key)
 
-
+print(f"Final audio uploaded to s3://{prod_bucket}/{final_audio_key}")
