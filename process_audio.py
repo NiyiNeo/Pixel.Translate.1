@@ -18,7 +18,7 @@ transcribe = session.client('transcribe')
 translate = session.client('translate')
 polly = session.client('polly')
 
-#GitHub secrets
+#Setup GitHub secrets
 prod_bucket = os.environ['S3_BUCKET_PROD']
 beta_bucket = os.environ['S3_BUCKET_BETA']
 filename = os.environ['FILENAME']
